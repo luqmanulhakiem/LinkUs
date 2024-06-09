@@ -6,16 +6,19 @@ import androidx.lifecycle.ViewModelProvider
 import com.dicoding.picodiploma.loginwithanimation.data.repositories.UserRepository
 import com.dicoding.picodiploma.loginwithanimation.data.repositories.StoryRepository
 import com.dicoding.picodiploma.loginwithanimation.data.di.Injection
+import com.dicoding.picodiploma.loginwithanimation.data.repositories.MapsRepository
 import com.dicoding.picodiploma.loginwithanimation.view.detail.DetailViewModel
 import com.dicoding.picodiploma.loginwithanimation.view.login.LoginViewModel
 import com.dicoding.picodiploma.loginwithanimation.view.main.MainViewModel
+import com.dicoding.picodiploma.loginwithanimation.view.map.MapsViewModel
 import com.dicoding.picodiploma.loginwithanimation.view.signup.SignUpViewModel
 import com.dicoding.picodiploma.loginwithanimation.view.tambah.AddStoryViewModel
 
 class ViewModelFactory(
     private val repository: UserRepository,
-    private val storyRepository: StoryRepository
-) : ViewModelProvider.NewInstanceFactory() {
+    private val storyRepository: StoryRepository,
+    private val mapsRepository: MapsRepository
+    ) : ViewModelProvider.NewInstanceFactory() {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -39,6 +42,9 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(AddStoryViewModel::class.java) -> {
                 AddStoryViewModel(storyRepository) as T
             }
+            modelClass.isAssignableFrom(MapsViewModel::class.java) -> {
+                MapsViewModel(mapsRepository) as T
+            }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
         }
@@ -51,7 +57,8 @@ class ViewModelFactory(
             instance ?: synchronized(this) {
                 instance ?: ViewModelFactory(
                     Injection.provideRepository(context),
-                    Injection.provideStoryRepository(context)
+                    Injection.provideStoryRepository(context),
+                    Injection.provideMapsRepository(context)
                 )
             }.also { instance = it }
     }

@@ -1,13 +1,19 @@
 package com.dicoding.picodiploma.loginwithanimation.data.repositories
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.liveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.liveData
 import com.dicoding.picodiploma.loginwithanimation.data.pref.ResultValue
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.response.AddStoryResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.DetailStoryResponse
-import com.dicoding.picodiploma.loginwithanimation.data.response.GetStoriesResponse
+import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiConfig
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiService
+import com.dicoding.picodiploma.loginwithanimation.data.source.StoryPagingSource
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -21,19 +27,17 @@ import java.io.File
 class StoryRepository private constructor(
     private val apiService: ApiService,
     private val userPreference: UserPreference
-){
-    fun getStories() = liveData {
-        emit(ResultValue.Loading)
-        try {
-            val user = runBlocking { userPreference.getSession().first() }
-            val apiService = ApiConfig.getApiService(user.token)
-            val successGetStories = apiService.getStories()
-            emit(ResultValue.Success(successGetStories))
-        } catch (e: HttpException) {
-            val jsonInString = e.response()?.errorBody()?.string()
-            val errorBody = Gson().fromJson(jsonInString, GetStoriesResponse::class.java)
-            errorBody?.message?.let { ResultValue.Error(it) }?.let { emit(it) }
-        }
+) {
+
+    fun getStories(): LiveData<PagingData<ListStoryItem>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5
+            ),
+            pagingSourceFactory = {
+                StoryPagingSource(apiService)
+            }
+        ).liveData
     }
 
     fun detailStory(id: String) = liveData {
@@ -70,7 +74,6 @@ class StoryRepository private constructor(
             errorBody?.message?.let { ResultValue.Error(it) }?.let { emit(it) }
         }
     }
-
 
     companion object {
         @Volatile
