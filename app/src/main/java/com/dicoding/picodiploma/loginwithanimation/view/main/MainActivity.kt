@@ -12,11 +12,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.picodiploma.loginwithanimation.R
-import com.dicoding.picodiploma.loginwithanimation.data.pref.ResultValue
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.databinding.ActivityMainBinding
 import com.dicoding.picodiploma.loginwithanimation.view.ViewModelFactory
 import com.dicoding.picodiploma.loginwithanimation.view.detail.DetailActivity
+import com.dicoding.picodiploma.loginwithanimation.view.map.MapsActivity
 import com.dicoding.picodiploma.loginwithanimation.view.tambah.AddStoryActivity
 import com.dicoding.picodiploma.loginwithanimation.view.welcome.WelcomeActivity
 
@@ -36,6 +36,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.toolbar.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                R.id.action_maps -> {
+                    startActivity(
+                        Intent(
+                            this,
+                            MapsActivity::class.java
+                        )
+                    )
+                    true
+                }
+
                 R.id.action_logout -> {
                     AlertDialog.Builder(this).apply {
                         setTitle(getString(R.string.txt_logout))

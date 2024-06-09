@@ -4,6 +4,7 @@ import android.content.Context
 import com.dicoding.picodiploma.loginwithanimation.data.repositories.UserRepository
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.pref.dataStore
+import com.dicoding.picodiploma.loginwithanimation.data.repositories.MapsRepository
 import com.dicoding.picodiploma.loginwithanimation.data.repositories.StoryRepository
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiConfig
 import kotlinx.coroutines.flow.first
@@ -23,5 +24,10 @@ object Injection {
         val user = runBlocking { pref.getSession().first() }
         val apiService = ApiConfig.getApiService(user.token)
         return StoryRepository.getInstance(apiService, pref)
+    }
+
+    fun provideMapsRepository(context: Context): MapsRepository {
+        val pref = UserPreference.getInstance(context.dataStore)
+        return MapsRepository.getInstance(pref)
     }
 }

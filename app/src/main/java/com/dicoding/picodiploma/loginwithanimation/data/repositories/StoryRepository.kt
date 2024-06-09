@@ -10,7 +10,6 @@ import com.dicoding.picodiploma.loginwithanimation.data.pref.ResultValue
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.response.AddStoryResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.DetailStoryResponse
-import com.dicoding.picodiploma.loginwithanimation.data.response.GetStoriesResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiConfig
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiService
@@ -28,21 +27,7 @@ import java.io.File
 class StoryRepository private constructor(
     private val apiService: ApiService,
     private val userPreference: UserPreference
-){
-
-//    fun getStories() = liveData {
-//        emit(ResultValue.Loading)
-//        try {
-//            val user = runBlocking { userPreference.getSession().first() }
-//            val apiService = ApiConfig.getApiService(user.token)
-//            val successGetStories = apiService.getStories()
-//            emit(ResultValue.Success(successGetStories))
-//        } catch (e: HttpException) {
-//            val jsonInString = e.response()?.errorBody()?.string()
-//            val errorBody = Gson().fromJson(jsonInString, GetStoriesResponse::class.java)
-//            errorBody?.message?.let { ResultValue.Error(it) }?.let { emit(it) }
-//        }
-//    }
+) {
 
     fun getStories(): LiveData<PagingData<ListStoryItem>> {
         return Pager(
@@ -89,7 +74,6 @@ class StoryRepository private constructor(
             errorBody?.message?.let { ResultValue.Error(it) }?.let { emit(it) }
         }
     }
-
 
     companion object {
         @Volatile

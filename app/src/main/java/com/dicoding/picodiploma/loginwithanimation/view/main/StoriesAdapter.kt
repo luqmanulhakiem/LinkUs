@@ -32,11 +32,13 @@ class StoriesAdapter(private val context: Context) :
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val stories = getItem(position)
         stories?.let { holder.bind(it, context) }
-        holder.itemView.setOnClickListener { getItem(position)?.let { it1 ->
-            onItemClickCallback.onItemClicked(
-                it1
-            )
-        } }
+        holder.itemView.setOnClickListener {
+            getItem(position)?.let { it1 ->
+                onItemClickCallback.onItemClicked(
+                    it1
+                )
+            }
+        }
     }
 
     class MyViewHolder(private val binding: ItemStoryBinding) :
