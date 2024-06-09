@@ -70,28 +70,14 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             } else {
-                viewModel.getStories().observe(this) { result ->
-                    when (result) {
-                        is ResultValue.Loading -> {
-                            showLoading(true)
-                        }
+                showRecycleView()
 
-                        is ResultValue.Success -> {
-                            showViewModel(result.data.listStory)
-                            showLoading(false)
-                        }
-
-                        is ResultValue.Error -> {
-                            showToast(result.error)
-                            showLoading(false)
-                        }
-
-                        else -> showToast(getString(R.string.txt_no_item))
-                    }
+                viewModel.getStories.observe(this) {
+                    binding.rvStories.visibility = View.VISIBLE
+                    storyAdapter.submitData(lifecycle, it)
                 }
             }
         }
-        showRecycleView()
         setupView()
     }
 
@@ -100,7 +86,11 @@ class MainActivity : AppCompatActivity() {
         binding.rvStories.apply {
             layoutManager = mLayoutManager
             setHasFixedSize(true)
-            adapter = storyAdapter
+            adapter = storyAdapter.withLoadStateFooter(
+                footer = LoadingStateAdapter {
+                    storyAdapter.retry()
+                }
+            )
         }
 
         storyAdapter.setOnItemClickCallback(object : StoriesAdapter.OnItemClickCallback {
@@ -108,15 +98,6 @@ class MainActivity : AppCompatActivity() {
                 showSelectedUser(data)
             }
         })
-    }
-
-    private fun showViewModel(storiesItem: List<ListStoryItem>) {
-        if (storiesItem.isNotEmpty()) {
-            binding.rvStories.visibility = View.VISIBLE
-            storyAdapter.submitList(storiesItem)
-        } else {
-            binding.rvStories.visibility = View.INVISIBLE
-        }
     }
 
     private fun showSelectedUser(stories: ListStoryItem) {
@@ -128,11 +109,6 @@ class MainActivity : AppCompatActivity() {
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
-    private fun showLoading(isLoading: Boolean) {
-        binding.progressBar3.visibility = if (isLoading) View.VISIBLE else View.GONE
-    }
-
 
     private fun setupView() {
         @Suppress("DEPRECATION")
