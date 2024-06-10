@@ -7,13 +7,13 @@ import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.response.ErrorResponse
 import com.dicoding.picodiploma.loginwithanimation.data.response.LoginResponse
-import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiService
+import com.dicoding.picodiploma.loginwithanimation.data.retrofit.AuthService
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 
 class UserRepository private constructor(
-    private val apiService: ApiService,
+    private val authService: AuthService,
     private val userPreference: UserPreference
 ) {
 
@@ -34,7 +34,7 @@ class UserRepository private constructor(
         return liveData {
             emit(ResultValue.Loading)
             try {
-                val successResponse = apiService.register(name, email, password).message
+                val successResponse = authService.register(name, email, password).message
                 emit(ResultValue.Success(successResponse))
             } catch (e: HttpException) {
                 val jsonInString = e.response()?.errorBody()?.string()
@@ -47,7 +47,7 @@ class UserRepository private constructor(
     fun login(email: String, password: String) = liveData {
         emit(ResultValue.Loading)
         try {
-            val successResponse = apiService.login(email, password)
+            val successResponse = authService.login(email, password)
             emit(ResultValue.Success(successResponse))
         } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()
@@ -60,11 +60,11 @@ class UserRepository private constructor(
         @Volatile
         private var instance: UserRepository? = null
         fun getInstance(
-            apiService: ApiService,
+            authService: AuthService,
             userPreference: UserPreference
         ): UserRepository =
             instance ?: synchronized(this) {
-                instance ?: UserRepository(apiService, userPreference)
+                instance ?: UserRepository(authService, userPreference)
             }.also { instance = it }
     }
 }

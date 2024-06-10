@@ -16,7 +16,7 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ApiService {
+interface AuthService {
     @FormUrlEncoded
     @POST("register")
     suspend fun register(
@@ -32,6 +32,8 @@ interface ApiService {
         @Field("password") password: String
     ): LoginResponse
 
+}
+interface ApiService {
     @GET("stories")
     suspend fun getStories(
         @Query("page") page: Int = 1,

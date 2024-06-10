@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.paging.map
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dicoding.picodiploma.loginwithanimation.R
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
@@ -80,14 +81,17 @@ class MainActivity : AppCompatActivity() {
                 startActivity(Intent(this, WelcomeActivity::class.java))
                 finish()
             } else {
-                showRecycleView()
 
-                viewModel.getStories.observe(this) {
-                    binding.rvStories.visibility = View.VISIBLE
-                    storyAdapter.submitData(lifecycle, it)
+                viewModel.getStories.observe(this) { result ->
+                    result.let {
+                        binding.rvStories.visibility = View.VISIBLE
+                        storyAdapter.submitData(lifecycle, it)
+                    }
                 }
             }
         }
+        showRecycleView()
+
         setupView()
     }
 
