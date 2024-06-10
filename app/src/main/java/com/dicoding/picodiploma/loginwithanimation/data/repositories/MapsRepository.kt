@@ -5,6 +5,7 @@ import com.dicoding.picodiploma.loginwithanimation.data.pref.ResultValue
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.response.GetStoriesResponse
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiConfig
+import com.dicoding.picodiploma.loginwithanimation.data.retrofit.StoryConfig
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -15,8 +16,8 @@ class MapsRepository(private val userPreference: UserPreference) {
         emit(ResultValue.Loading)
         try {
             val user = runBlocking { userPreference.getSession().first() }
-            val apiService = ApiConfig.getApiService(user.token)
-            val successGetStoriesWithLocation = apiService.getStoriesWithLocation()
+            val storyConfig = StoryConfig.getStoryService(user.token)
+            val successGetStoriesWithLocation = storyConfig.getStoriesWithLocation()
             emit(ResultValue.Success(successGetStoriesWithLocation))
         } catch (e: HttpException) {
             val jsonInString = e.response()?.errorBody()?.string()

@@ -10,6 +10,8 @@ import com.dicoding.picodiploma.loginwithanimation.data.repositories.UserReposit
 import com.dicoding.picodiploma.loginwithanimation.data.pref.UserModel
 import com.dicoding.picodiploma.loginwithanimation.data.repositories.StoryRepository
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
+import com.dicoding.picodiploma.loginwithanimation.data.retrofit.StoryConfig
+import com.dicoding.picodiploma.loginwithanimation.data.retrofit.StoryService
 import kotlinx.coroutines.launch
 
 class MainViewModel(
@@ -17,12 +19,18 @@ class MainViewModel(
     private val storyRepository: StoryRepository
 ) : ViewModel() {
 
-    val getStories: LiveData<PagingData<ListStoryItem>> =
-        storyRepository.getStories().cachedIn(viewModelScope)
+    private var storyService: StoryService? = null
 
+    fun initializeApiService(token: String) {
+        storyService = StoryConfig.getStoryService(token)
+    }
     fun getSession(): LiveData<UserModel> {
         return repository.getSession().asLiveData()
     }
+
+    val getStories: LiveData<PagingData<ListStoryItem>> =
+        storyRepository.getStories().cachedIn(viewModelScope)
+
 
     fun logout() {
         viewModelScope.launch {

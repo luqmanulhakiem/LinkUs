@@ -16,21 +16,27 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ApiService {
-    @FormUrlEncoded
-    @POST("register")
-    suspend fun register(
-        @Field("name") name: String,
-        @Field("email") email: String,
-        @Field("password") password: String
-    ): RegisterResponse
+interface StoryService {
+    @GET("stories")
+    suspend fun getStories(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 20
+    ): GetStoriesResponse
+    @GET("stories")
+    suspend fun getStoriesWithLocation(
+        @Query("location") location : Int = 1,
+    ): GetStoriesResponse
 
-    @FormUrlEncoded
-    @POST("login")
-    suspend fun login(
-        @Field("email") name: String,
-        @Field("password") password: String
-    ): LoginResponse
+    @GET("stories/{id}")
+    suspend fun detailStory(
+        @Path("id") id: String
+    ): DetailStoryResponse
 
+    @Multipart
+    @POST("stories")
+    suspend fun uploadStory(
+        @Part photo: MultipartBody.Part,
+        @Part("description") description: RequestBody,
+    ): AddStoryResponse
 
 }

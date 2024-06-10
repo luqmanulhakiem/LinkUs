@@ -65,6 +65,7 @@ class LoginActivity : AppCompatActivity() {
                     }
 
                     is ResultValue.Success -> {
+                        viewModel.initializeApiService(result.data.loginResult.token)
                         viewModel.saveSession(UserModel(email, result.data.loginResult.token))
                         showAlertDialog(
                             getString(R.string.txt_success),
