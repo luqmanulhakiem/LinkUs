@@ -2,10 +2,14 @@ package com.dicoding.picodiploma.loginwithanimation.data.source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.dicoding.picodiploma.loginwithanimation.data.pref.UserPreference
 import com.dicoding.picodiploma.loginwithanimation.data.response.ListStoryItem
+import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiConfig
 import com.dicoding.picodiploma.loginwithanimation.data.retrofit.ApiService
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
-class StoryPagingSource(private val apiService: ApiService) : PagingSource<Int, ListStoryItem>() {
+class StoryPagingSource(private val apiService: ApiService, private val userPreference: UserPreference) : PagingSource<Int, ListStoryItem>() {
 
     private companion object {
         const val INITIAL_PAGE_INDEX = 1
@@ -20,6 +24,8 @@ class StoryPagingSource(private val apiService: ApiService) : PagingSource<Int, 
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListStoryItem> {
         return try {
+            val user = runBlocking { userPreference.getSession().first() }
+            val apiService = ApiConfig.getApiService(user.token)
             val position = params.key ?: INITIAL_PAGE_INDEX
             val responseData = apiService.getStories(position, params.loadSize)
             LoadResult.Page(

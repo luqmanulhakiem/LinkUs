@@ -35,7 +35,7 @@ class StoryRepository private constructor(
                 pageSize = 5
             ),
             pagingSourceFactory = {
-                StoryPagingSource(apiService)
+                StoryPagingSource(apiService, userPreference)
             }
         ).liveData
     }
